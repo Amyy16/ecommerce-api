@@ -12,8 +12,8 @@ const { verify } = require("../middlewares/verify");
 
 routes.post("/cart", verify, addToCart);
 routes.get("/cart", verify, viewCart);
-routes.delete("/removeProduct", verify, removeProduct);
-routes.post("/decreaseQuantity", verify, decreaseQuantity);
+routes.delete("/cart/removeProduct", verify, removeProduct);
+routes.post("/cart/decreaseQuantity", verify, decreaseQuantity);
 routes.delete("/clearCart", verify, clearCart);
 
 module.exports = routes;

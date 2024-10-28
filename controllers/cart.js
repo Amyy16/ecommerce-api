@@ -49,7 +49,7 @@ const addToCart = async (req, res) => {
     //update the cart total price
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price, 0);
     const savedCart = await cart.save();
-    res.status(201).json(savedCart);
+    res.status(201).json({ message: "product added successfully", savedCart });
   } catch (error) {
     res.status(500).json(error.message);
   }
@@ -90,7 +90,7 @@ const removeProduct = async (req, res) => {
     //recalculate total price
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price, 0);
     await cart.save();
-    res.status(200).json(cart);
+    res.status(200).json({ message: "product removed", cart });
   } catch (error) {
     res.status(500).json(error.message);
   }
@@ -116,6 +116,10 @@ const decreaseQuantity = async (req, res) => {
     }
     //decrase quantity by one
     cart.items[productIndex].quantity -= 1;
+    //update price based on quantity
+    const product = await productModel.findById(productId);
+    cart.items[productIndex].price =
+      cart.items[productIndex].quantity * product.price;
     //remove product if quantity goes to zero or below
     if (cart.items[productIndex].quantity <= 0) {
       cart.items.splice(productIndex, 1);
@@ -123,7 +127,7 @@ const decreaseQuantity = async (req, res) => {
     //recalculate total price
     cart.totalPrice = cart.items.reduce((acc, item) => acc + item.price, 0);
     await cart.save();
-    res.status(200).json({ message: "quanity decreased by one", cart });
+    res.status(200).json({ message: "quantity decreased by one", cart });
   } catch (error) {
     res.status(500).json(error.message);
   }
