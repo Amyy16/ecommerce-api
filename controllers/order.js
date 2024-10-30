@@ -25,9 +25,16 @@ const createOrder = async (req, res) => {
       totalAmount: cart.totalPrice,
     });
     const savedOrder = await order.save();
+    //update quantity in stock after making orders by looping through the array
+    for (const item of order.items) {
+      const product = await productModel.findById(item.productId);
+      product.instock -= item.quantity;
+      await product.save();
+    }
     //clear cart after making order
-    await cartModel.findOneAndUpdate({ userId }, { items: [], totalPrice: 0 });
-    //reduce quantity in stock
+    cart.items = [];
+    cart.totalPrice = 0;
+    await cart.save();
     res.status(201).json({
       message: "order created successfully",
       order: savedOrder,
@@ -77,12 +84,13 @@ const getOrder = async (req, res) => {
 //private Admin
 const getOrders = async (req, res) => {
   try {
+    const { status } = req.query;
     const { role } = req.user;
     if (role !== "SuperAdmin" && role !== "Admin") {
       return res.status(403).json({ message: "you are not authorized" });
     }
     const orders = await orderModel
-      .find()
+      .find({ status })
       .populate({ path: "userId", select: "name email" })
       .populate({ path: "items.productId", select: "name brand price" });
     res.status(200).json(orders);

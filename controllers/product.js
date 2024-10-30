@@ -18,21 +18,10 @@ const addProduct = async (req, res) => {
   }
 };
 
-//get products
-//public
-const getProducts = async (req, res) => {
-  try {
-    const allProducts = await productModel.find();
-    res.status(200).json(allProducts);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
-
 //get products with query
 //private users
 //search by category, brand, price
-const products = async (req, res) => {
+const getProducts = async (req, res) => {
   try {
     const { category, brand, priceMin, priceMax } = req.query;
     //build query object
@@ -114,7 +103,6 @@ const deleteProduct = async (req, res) => {
 module.exports = {
   addProduct,
   getProducts,
-  products,
   updateProduct,
   deleteProduct,
 };
