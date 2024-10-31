@@ -16,7 +16,7 @@ const updateUserInfo = async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: "something went wrong" });
   }
-}; //pwd shows here hide it
+};
 
 //update password
 //private user
